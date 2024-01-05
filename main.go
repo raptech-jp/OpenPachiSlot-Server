@@ -53,11 +53,13 @@ func main() {
 	// Check and create table if not exists
 	createTableQuery := `
 	CREATE TABLE IF NOT EXISTS items (
-		id UUID PRIMARY KEY,
+		id SERIAL PRIMARY KEY,
 		name VARCHAR(255) NOT NULL,
-		count INTEGER NOT NULL
-	);
+		count INTEGER NOT NULL,
+		card_id VARCHAR(255) UNIQUE NOT NULL
+	);	
 	`
+
 	fmt.Println("Creating table...")
 	_, err = db.Exec(createTableQuery)
 	if err != nil {
@@ -67,31 +69,33 @@ func main() {
 	fmt.Println("Starting the server...")
 	r := gin.Default()
 
-	// /Register new item
+	// Register new item
 	r.POST("/register", func(c *gin.Context) {
 		var requestBody struct {
-			Name string `json:"name"`
+			Name   string `json:"name"`
+			CardID string `json:"card_id"`
 		}
 		if err := c.ShouldBindJSON(&requestBody); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		newID := uuid.New()
-		_, err := db.Exec("INSERT INTO items (id, name, count) VALUES ($1, $2, $3)", newID, requestBody.Name, 0)
+		var newID int
+		err := db.QueryRow("INSERT INTO items (name, count, card_id) VALUES ($1, $2, $3) RETURNING id", requestBody.Name, 0, requestBody.CardID).Scan(&newID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"id": newID.String()})
+		c.JSON(http.StatusOK, gin.H{"id": newID})
 	})
 
-	// /Add count to item
+	// Add count to item
 	r.POST("/add", func(c *gin.Context) {
 		var requestBody struct {
-			ID    string `json:"id"`
-			Count int    `json:"count"`
+			ID     string `json:"id"`
+			Count  int    `json:"count"`
+			CardID string `json:"card_id"`
 		}
 		if err := c.ShouldBindJSON(&requestBody); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -106,13 +110,20 @@ func main() {
 
 		// Query data from the database
 		var count int
-		err = db.QueryRow("SELECT count FROM items WHERE id = $1", id).Scan(&count)
+		var storedCardID string
+		err = db.QueryRow("SELECT count, card_id FROM items WHERE id = $1", id).Scan(&count, &storedCardID)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
 			} else {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			}
+			return
+		}
+
+		// Check if card_id matches
+		if storedCardID != requestBody.CardID {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized access"})
 			return
 		}
 
@@ -128,20 +139,32 @@ func main() {
 	})
 
 	// Get data by ID
-	r.GET("/item/:id", func(c *gin.Context) {
-		id := c.Param("id")
-
-		// Query data from the database
-		var item RequestBody
-		err := db.QueryRow("SELECT name, count FROM items WHERE id = $1", id).Scan(&item.Name, &item.Count)
-		if err != nil {
-			c.JSON(500, gin.H{
-				"error": err.Error(),
-			})
+	r.POST("/data", func(c *gin.Context) {
+		var requestBody struct {
+			CardID string `json:"card_id"` // Removed ID field
+		}
+		if err := c.ShouldBindJSON(&requestBody); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(200, item)
+		// Query data from the database using CardID
+		var item struct {
+			Name  string `json:"name"`
+			Count int    `json:"count"`
+		}
+		err := db.QueryRow("SELECT name, count FROM items WHERE card_id = $1", requestBody.CardID).Scan(&item.Name, &item.Count)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			}
+			return
+		}
+
+		// Since we're using CardID directly, no need to check if it matches
+		c.JSON(http.StatusOK, item)
 	})
 
 	go func() {
