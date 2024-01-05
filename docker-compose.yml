@@ -10,12 +10,14 @@ services:
     build: "./"
     ports:
       - 8080:8080
+    env_file:
+      - .env
     command: sh -c 'go mod tidy && air -c .air.toml'  # airを使ってホットリロード
 
   postgres:
     container_name: postgres
     image: postgres:latest
     env_file:
-      - .env  # .env ファイルの指定
+      - .env
     ports:
       - 5432:5432

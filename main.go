@@ -2,7 +2,11 @@ package main
 
 import (
 	"fmt"
+	"database/sql"
+	"os"
+    _ "github.com/lib/pq"
 	"github.com/gin-gonic/gin"
+	
 )
 
 type RequestBody struct {
@@ -11,6 +15,25 @@ type RequestBody struct {
 }
 
 func main() {
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("POSTGRES_PORT")
+	dbUser := os.Getenv("POSTGRES_USER")
+	dbPassword := os.Getenv("POSTGRES_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+
+	dbConnectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+	dbHost, dbPort, dbUser, dbPassword, dbName)
+	
+	// データベース接続
+	db, err := sql.Open("postgres", dbConnectionString)
+	if err != nil {
+		fmt.Println("Error connecting to the database:", err)
+		return
+	}else{
+		fmt.Println("Success connecting to the database:", db)
+	}
+	defer db.Close()
+
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
