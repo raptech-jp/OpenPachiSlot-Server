@@ -1,14 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"database/sql"
+	"fmt"
 	"os"
-    _ "github.com/lib/pq"
+
 	"github.com/gin-gonic/gin"
-	
+	_ "github.com/lib/pq"
 )
 
+// RequestBody is a struct to bind JSON data
 type RequestBody struct {
 	Name  string `json:"name"`
 	Count int    `json:"count"`
@@ -22,14 +23,14 @@ func main() {
 	dbName := os.Getenv("DB_NAME")
 
 	dbConnectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-	dbHost, dbPort, dbUser, dbPassword, dbName)
-	
+		dbHost, dbPort, dbUser, dbPassword, dbName)
+
 	// データベース接続
 	db, err := sql.Open("postgres", dbConnectionString)
 	if err != nil {
 		fmt.Println("Error connecting to the database:", err)
 		return
-	}else{
+	} else {
 		fmt.Println("Success connecting to the database:", db)
 	}
 	defer db.Close()
@@ -69,5 +70,12 @@ func main() {
 			"message": message,
 		})
 	})
-	r.Run()
+
+	// 別のgoroutine内でGinを実行
+	go func() {
+		if err := r.Run(":8080"); err != nil {
+			fmt.Println("Error starting the server:", err)
+		}
+	}()
+	select {}
 }
