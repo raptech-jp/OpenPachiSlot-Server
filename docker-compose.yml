@@ -4,7 +4,7 @@ services:
   vue-app:
     build:
       context: ./vueApp
-      dockerfile: Dockerfile  # vueApp ディレクトリ内の Dockerfile を指定
+      dockerfile: Dockerfile
     tty: true
     env_file:
       - .env
@@ -12,15 +12,15 @@ services:
       - NODE_ENV=development
     volumes:
     - ./vueApp:/usr/src/app
-    command: sh -c "cd vue-sample && npm run serve"
+    command: sh -c "cd vue-front && npm run serve"
     ports:
     - "${VUE_PORT}:8080"
 
-  go:
-    container_name: main_server
+  go-app:
+    container_name: go_server
     build:
       context: ./goApp
-      dockerfile: Dockerfile # goApp ディレクトリ内の Dockerfile.go を指定
+      dockerfile: Dockerfile
     volumes:
       - ./goApp:/project
     working_dir: /project
