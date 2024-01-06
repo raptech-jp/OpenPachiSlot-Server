@@ -1,11 +1,13 @@
 # OpenPachiSlot-Server
 
-OpenPachiSlot-Server is an in-development software solution integrating a Go-based web server with a PostgreSQL database. It is designed to manage and track items using a RESTful API, leveraging the power of Docker for environment setup and Gin framework for handling HTTP requests.
+OpenPachiSlot-Server is an in-development software solution integrating a Go-based web server, a Vue.js front-end, and a PostgreSQL database. It's designed for managing and tracking items using a RESTful API, employing Docker for environment setup, the Gin framework for HTTP requests, and Vue.js for a dynamic user interface.
 
 ## Requirements
 
 - Docker and Docker Compose
 - Go (for development)
+- Node.js and npm (for Vue.js development)
+
 
 ## Installation and Setup
 
@@ -24,17 +26,18 @@ OpenPachiSlot-Server is an in-development software solution integrating a Go-bas
     POSTGRES_PORT=5432
     POSTGRES_DB=DATABASE_NAME
     GO_PORT=8080
+    VUE_PORT=8081
     ```
 
-3. **Docker Compose:**
+3. **Docker Compose Setup:**
 
-    The `docker-compose.yml` file is set up to create two services:
+    The `docker-compose.yml` file configures three services:
 
-    - `go`: The main Go server.
+    - `vue-app`: A Vue.js application for the front-end interface.
+    - `go`: The main Go server for the backend.
     - `postgres`: A PostgreSQL database.
 
-    To start the services, run:
-
+    To start all
     ```
     docker-compose up --build
     ```
