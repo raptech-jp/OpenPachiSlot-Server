@@ -37,7 +37,7 @@ OpenPachiSlot-Server is an in-development software solution integrating a Go-bas
     - `go-app`: The main Go server for the backend.
     - `postgres`: A PostgreSQL database.
 
-    To start all
+    To start all services, run:
     ```
     docker-compose up --build
     ```
