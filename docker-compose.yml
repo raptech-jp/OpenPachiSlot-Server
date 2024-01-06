@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   vue-app:
+    container_name: vue_frontend
     build:
       context: ./vueApp
       dockerfile: Dockerfile
@@ -10,12 +11,12 @@ services:
       - .env
     environment:
       - NODE_ENV=development
-      - HOST=0.0.0.0
-      - CHOKIDAR_USEPOLLING=true
     volumes:
     - ./vueApp:/usr/src/app
     - node_modules:/usr/src/app/openpachislot-console/node_modules
     command: sh -c "npm run serve"
+    depends_on:
+      - go-app
     ports:
     - "${VUE_PORT}:8080"
     
@@ -37,7 +38,7 @@ services:
     command: sh -c 'go mod tidy && air -c .air.toml'
 
   postgres:
-    container_name: postgres
+    container_name: postgres_db
     image: postgres:latest
     env_file:
       - .env
