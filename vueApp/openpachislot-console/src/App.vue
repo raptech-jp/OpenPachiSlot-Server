@@ -12,7 +12,6 @@
 
 <script>
 import axios from 'axios';
-const apiUrl = process.env.VUE_APP_API_URL;
 
 export default {
   name: 'App',
@@ -30,7 +29,7 @@ export default {
           name: this.name,
           card_id: this.cardId
         };
-        const response = await axios.post(`${apiUrl}/register`, payload);
+        const response = await axios.post(`/api/register`, payload);
         this.responseMessage = response.data;
         // Process the API response here
       } catch (error) {

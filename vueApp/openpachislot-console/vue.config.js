@@ -5,6 +5,9 @@ module.exports = defineConfig({
     watchOptions :{
       aggregateTimeout: 300,
       poll: 1000
+    },
+    devServer: {
+      allowedHosts: 'all',
     }
   }
 })

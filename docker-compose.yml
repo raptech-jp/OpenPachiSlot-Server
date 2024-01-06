@@ -17,9 +17,9 @@ services:
     command: sh -c "npm run serve"
     depends_on:
       - go-app
-    ports:
-    - "${VUE_PORT}:8080"
-    
+    networks:
+      - webnet
+
   go-app:
     container_name: go_server
     build:
@@ -29,13 +29,13 @@ services:
       - ./goApp:/project
     working_dir: /project
     tty: true
-    ports:
-      - "${GO_PORT}:8080"
     env_file:
       - .env
     depends_on:
       - postgres
     command: sh -c 'go mod tidy && air -c .air.toml'
+    networks:
+      - webnet
 
   postgres:
     container_name: postgres_db
@@ -50,6 +50,25 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - webnet
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - vue-app
+      - go-app
+    networks:
+      - webnet
+
 volumes:
   postgres_data:
   node_modules:
+
+networks:
+  webnet:
