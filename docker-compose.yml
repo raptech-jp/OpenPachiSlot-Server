@@ -10,12 +10,15 @@ services:
       - .env
     environment:
       - NODE_ENV=development
+      - HOST=0.0.0.0
+      - CHOKIDAR_USEPOLLING=true
     volumes:
     - ./vueApp:/usr/src/app
-    command: sh -c "cd openpachislot-console && npm run serve"
+    - node_modules:/usr/src/app/openpachislot-console/node_modules
+    command: sh -c "npm run serve"
     ports:
     - "${VUE_PORT}:8080"
-
+    
   go-app:
     container_name: go_server
     build:
@@ -48,3 +51,4 @@ services:
       - postgres_data:/var/lib/postgresql/data
 volumes:
   postgres_data:
+  node_modules:
