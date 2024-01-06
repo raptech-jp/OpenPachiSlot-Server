@@ -12,12 +12,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// RequestBody is a struct to bind JSON data
-type RequestBody struct {
-	Name  string `json:"name"`
-	Count int    `json:"count"`
-}
-
 // Database connection instance
 var db *sql.DB
 

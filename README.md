@@ -34,7 +34,7 @@ OpenPachiSlot-Server is an in-development software solution integrating a Go-bas
     The `docker-compose.yml` file configures three services:
 
     - `vue-app`: A Vue.js application for the front-end interface.
-    - `go`: The main Go server for the backend.
+    - `go-app`: The main Go server for the backend.
     - `postgres`: A PostgreSQL database.
 
     To start all
