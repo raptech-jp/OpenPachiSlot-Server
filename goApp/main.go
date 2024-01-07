@@ -83,7 +83,7 @@ func registerItem(c *gin.Context) {
     var existingID int
     err := db.QueryRow("SELECT id FROM items WHERE card_id = $1", requestBody.CardID).Scan(&existingID)
     if err == nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Card ID already exists"})
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Registration failed: This Card ID ("+ requestBody.CardID +") already exists"})
         return
     } else if err != sql.ErrNoRows {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

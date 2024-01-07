@@ -20,20 +20,27 @@ export default {
   components: {
     ItemList // Registering the new component
   },
+  data() {
+    return {
+      name: '',
+      cardId: '',
+      responseMessage: '',
+      registrationSuccessful: false,
+    };
+  },
   methods: {
-    async sendData() {
-      try {
-        const payload = {
-          name: this.name,
-          card_id: this.cardId
-        };
-        await axios.post(`/api/register`, payload);
-        this.$refs.itemList.fetchItems();
-      } catch (error) {
-        console.error('API request failed', error);
-      }
-    }
-  }
+    sendData() {
+      axios.post('/api/register', { name: this.name, card_id: this.cardId })
+        .then(response => {
+          this.responseMessage = response.data.message; // 登録成功時のメッセージ
+          this.registrationSuccessful = true; // 入力フィールドを非表示にする
+          this.$refs.itemList.fetchItems();
+        })
+        .catch(error => {
+          this.responseMessage = error.response.data.error; // エラーメッセージ
+        });
+    },
+  },
 };
 </script>
 
