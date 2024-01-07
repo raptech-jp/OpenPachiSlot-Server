@@ -1,10 +1,11 @@
 <template>
-  <div id="app">
-    <RegisterForms @registration-success="handleRegistration" />
-    <generateQRCode v-if="cardId" :uuid="cardId" :name="name"></generateQRCode>
-    <ItemList ref="itemList" />
+  <div id="app" class="font-sans antialiased text-center text-gray-800 mt-15">
+    <RegisterForms @registration-success="handleRegistration" class="p-4" />
+    <generateQRCode v-if="cardId" :uuid="cardId" :name="name" class="p-4"></generateQRCode>
+    <ItemList ref="itemList" class="p-4" />
   </div>
 </template>
+
 
 <script>
 import RegisterForms from './components/RegisterForms.vue';
@@ -38,14 +39,3 @@ export default {
   }
 };
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>

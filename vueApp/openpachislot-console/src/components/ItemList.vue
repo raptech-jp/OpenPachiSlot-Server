@@ -1,25 +1,27 @@
 <template>
-  <div>
-    <h1>Items List</h1>
-    <table v-if="items && items.length">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Count</th>
-          <th>Card ID</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in items" :key="item.id">
-          <td>{{ item.id }}</td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.count }}</td>
-          <td>{{ item.card_id }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <p v-else>No items found.</p>
+  <div class="container mx-auto px-4">
+    <h1 class="text-2xl font-bold mb-4">Items List</h1>
+    <div v-if="sortedItems && sortedItems.length">
+      <table class="w-full text-sm text-left rtl:text-right text-gray-700" >
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th class="border px-4 py-2 bg-gray-100 text-left">ID</th>
+            <th class="border px-4 py-2 bg-gray-100 text-left">Name</th>
+            <th class="border px-4 py-2 bg-gray-100 text-left">Count</th>
+            <th class="border px-4 py-2 bg-gray-100 text-left">Card ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in sortedItems" :key="item.id">
+            <td class="border px-4 py-2">{{ item.id }}</td>
+            <td class="border px-4 py-2">{{ item.name }}</td>
+            <td class="border px-4 py-2">{{ item.count }}</td>
+            <td class="border px-4 py-2">{{ item.card_id }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p v-else class="text-gray-600">No items found.</p>
   </div>
 </template>
 
@@ -31,6 +33,12 @@ export default {
     return {
       items: []
     };
+  },
+  computed: {
+    sortedItems() {
+      // IDを昇順にソートした新しい配列を返す
+      return this.items.slice().sort((a, b) => a.id - b.id);
+    }
   },
   created() {
     this.fetchItems();
@@ -50,27 +58,3 @@ export default {
   }
 };
 </script>
-
-<style>
-table {
-  width: 100%;
-  margin: auto;
-  border-collapse: collapse;
-}
-
-@media screen and (min-width: 768px) {
-  table {
-    width: 80%;
-  }
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-th {
-  text-align: left;
-  background-color: #f2f2f2;
-}
-</style>
