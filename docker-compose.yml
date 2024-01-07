@@ -16,7 +16,7 @@ services:
     - node_modules:/usr/src/app/openpachislot-console/node_modules
     command: sh -c "npm run serve"
     depends_on:
-      - go-app
+      - postgres
     networks:
       - webnet
 
