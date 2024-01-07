@@ -63,28 +63,41 @@ func setupRouter() *gin.Engine {
 	r.POST("/register", registerItem)
 	r.POST("/add", addItemCount)
 	r.POST("/data", getItemData)
+	r.GET("/all-items", getAllItems)
 
 	return r
 }
 
 // Register new item
 func registerItem(c *gin.Context) {
-	var requestBody struct {
-		Name   string `json:"name"`
-		CardID string `json:"card_id"`
-	}
-	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+    var requestBody struct {
+        Name   string `json:"name"`
+        CardID string `json:"card_id"`
+    }
+    if err := c.ShouldBindJSON(&requestBody); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
 
-	var newID int
-	err := db.QueryRow("INSERT INTO items (name, count, card_id) VALUES ($1, $2, $3) RETURNING id", requestBody.Name, 0, requestBody.CardID).Scan(&newID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"id": newID})
+    // Check if cardID already exists
+    var existingID int
+    err := db.QueryRow("SELECT id FROM items WHERE card_id = $1", requestBody.CardID).Scan(&existingID)
+    if err == nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Card ID already exists"})
+        return
+    } else if err != sql.ErrNoRows {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    var newID int
+    err = db.QueryRow("INSERT INTO items (name, count, card_id) VALUES ($1, $2, $3) RETURNING id", requestBody.Name, 0, requestBody.CardID).Scan(&newID)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "Item registered", "id": newID})
 }
 
 func addItemCount(c *gin.Context) {
@@ -161,6 +174,43 @@ func getItemData(c *gin.Context) {
 
 	// Since we're using CardID directly, no need to check if it matches
 	c.JSON(http.StatusOK, item)
+}
+
+func getAllItems(c *gin.Context) {
+	var items []struct {
+		ID     int    `json:"id"`
+		Name   string `json:"name"`
+		Count  int    `json:"count"`
+		CardID string `json:"card_id"`
+	}
+
+	rows, err := db.Query("SELECT id, name, count, card_id FROM items")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var item struct {
+			ID     int    `json:"id"`
+			Name   string `json:"name"`
+			Count  int    `json:"count"`
+			CardID string `json:"card_id"`
+		}
+		if err := rows.Scan(&item.ID, &item.Name, &item.Count, &item.CardID); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		items = append(items, item)
+	}
+
+	if err := rows.Err(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, items)
 }
 
 // CORS middleware

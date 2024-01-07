@@ -7,20 +7,18 @@
       <h2>Response:</h2>
       <p>{{ responseMessage }}</p>
     </div>
+    <ItemList ref="itemList" /> <!-- New component for displaying items -->
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import ItemList from './components/ItemList.vue'; // Importing the new component
 
 export default {
   name: 'App',
-  data() {
-    return {
-      name: '',
-      cardId: '',
-      responseMessage: ''
-    };
+  components: {
+    ItemList // Registering the new component
   },
   methods: {
     async sendData() {
@@ -29,9 +27,8 @@ export default {
           name: this.name,
           card_id: this.cardId
         };
-        const response = await axios.post(`/api/register`, payload);
-        this.responseMessage = response.data;
-        // Process the API response here
+        await axios.post(`/api/register`, payload);
+        this.$refs.itemList.fetchItems();
       } catch (error) {
         console.error('API request failed', error);
       }
