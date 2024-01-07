@@ -26,7 +26,7 @@ export default {
                 return;
             }
 
-            axios.post('/api/register', { name: this.name })
+            axios.post('/api/user', { name: this.name })
                 .then(response => {
                     this.cardId = response.data.cardId;
                     this.registrationSuccessful = true;
