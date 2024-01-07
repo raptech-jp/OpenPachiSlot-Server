@@ -2,6 +2,7 @@
     <div v-if="qrCodeData">
         <img :src="qrCodeData" alt="QR Code">
         <p>Name: {{ name }}</p>
+        <p>この画面を保存してください。QRコードの再発行はできません。</p>
     </div>
 </template>
 
@@ -11,7 +12,7 @@ import QRCode from 'qrcode';
 export default {
     props: {
         uuid: String,
-        name: String
+        name: String,
     },
     data() {
         return {

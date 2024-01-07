@@ -44,6 +44,9 @@ export default {
         console.error('Error fetching items:', error);
       }
     }
+  },
+  mounted() {
+    this.fetchItems(); // コンポーネントのマウント時にアイテムを取得
   }
 };
 </script>
