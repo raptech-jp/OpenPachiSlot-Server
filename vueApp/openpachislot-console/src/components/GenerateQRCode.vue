@@ -1,6 +1,7 @@
 <template>
     <div v-if="qrCodeData">
         <img :src="qrCodeData" alt="QR Code">
+        <p>Name: {{ name }}</p>
     </div>
 </template>
 
@@ -9,11 +10,12 @@ import QRCode from 'qrcode';
 
 export default {
     props: {
-        uuid: String
+        uuid: String,
+        name: String
     },
     data() {
         return {
-            qrCodeData: null
+            qrCodeData: null,
         };
     },
     watch: {

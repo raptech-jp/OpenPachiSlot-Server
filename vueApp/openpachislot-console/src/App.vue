@@ -2,7 +2,7 @@
   <div id="app">
     <input v-model="name" type="text" placeholder="Enter name">
     <button @click="sendData">Register</button>
-    <generateQRCode v-if="cardId" :uuid="cardId"></generateQRCode> <!-- UUID を渡し、cardId がある場合にのみ表示 -->
+    <generateQRCode v-if="cardId" :uuid="cardId" :name="name"></generateQRCode>
     <ItemList ref="itemList" />
   </div>
 </template>

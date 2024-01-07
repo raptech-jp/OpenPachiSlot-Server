@@ -96,7 +96,7 @@ func registerItem(c *gin.Context) {
 		return
 	}
 
-    c.JSON(http.StatusOK, gin.H{"cardId": cardID})
+    c.JSON(http.StatusOK, gin.H{"id":newID, "name": requestBody.Name, "cardId": cardID})
 }
 
 func addItemCount(c *gin.Context) {
