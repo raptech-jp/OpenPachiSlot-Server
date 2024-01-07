@@ -48,11 +48,16 @@ export default {
 </script>
 
 <style>
-/* 必要に応じてスタイルを追加 */
 table {
-  width: 80%;
+  width: 100%;
   margin: auto;
   border-collapse: collapse;
+}
+
+@media screen and (min-width: 768px) {
+  table {
+    width: 80%;
+  }
 }
 
 th, td {
