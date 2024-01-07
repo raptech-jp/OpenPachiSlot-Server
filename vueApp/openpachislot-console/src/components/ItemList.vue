@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Items List</h1>
-    <table v-if="items.length">
+    <table v-if="items && items.length">
       <thead>
         <tr>
           <th>ID</th>
@@ -23,6 +23,7 @@
   </div>
 </template>
 
+
 <script>
 import axios from 'axios';
 export default {
@@ -43,6 +44,9 @@ export default {
         console.error('Error fetching items:', error);
       }
     }
+  },
+  mounted() {
+    this.fetchItems(); // コンポーネントのマウント時にアイテムを取得
   }
 };
 </script>

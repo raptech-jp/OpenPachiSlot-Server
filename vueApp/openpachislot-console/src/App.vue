@@ -1,49 +1,43 @@
 <template>
   <div id="app">
-    <input v-model="name" type="text" placeholder="Enter name">
-    <input v-model="cardId" type="text" placeholder="Enter card ID">
-    <button @click="sendData">Send</button>
-    <div v-if="responseMessage">
-      <h2>Response:</h2>
-      <p>{{ responseMessage }}</p>
-    </div>
-    <ItemList ref="itemList" /> <!-- New component for displaying items -->
+    <RegisterForms @registration-success="handleRegistration" />
+    <generateQRCode v-if="cardId" :uuid="cardId" :name="name"></generateQRCode>
+    <ItemList ref="itemList" />
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import ItemList from './components/ItemList.vue'; // Importing the new component
+import RegisterForms from './components/RegisterForms.vue';
+import ItemList from './components/ItemList.vue';
+import generateQRCode from './components/GenerateQRCode.vue';
 
 export default {
   name: 'App',
   components: {
-    ItemList // Registering the new component
+    RegisterForms,
+    generateQRCode,
+    ItemList
   },
   data() {
     return {
       name: '',
-      cardId: '',
-      responseMessage: '',
-      registrationSuccessful: false,
+      cardId: null
     };
   },
   methods: {
-    sendData() {
-      axios.post('/api/register', { name: this.name, card_id: this.cardId })
-        .then(response => {
-          this.responseMessage = response.data.message; // 登録成功時のメッセージ
-          this.registrationSuccessful = true; // 入力フィールドを非表示にする
-          this.$refs.itemList.fetchItems();
-        })
-        .catch(error => {
-          this.responseMessage = error.response.data.error; // エラーメッセージ
-        });
+    handleRegistration(data) {
+      this.name = data.name;
+      this.cardId = data.cardId;
+      this.refreshItems();
     },
-  },
+    refreshItems() {
+      if (this.$refs.itemList) {
+        this.$refs.itemList.fetchItems();
+      }
+    }
+  }
 };
 </script>
-
 
 <style>
 #app {

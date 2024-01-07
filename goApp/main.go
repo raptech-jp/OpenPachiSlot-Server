@@ -2,10 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"os"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -48,7 +48,7 @@ func createTable() {
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         count INTEGER NOT NULL,
-        card_id VARCHAR(255) UNIQUE NOT NULL
+        card_id UUID UNIQUE NOT NULL
     );	
     `
 	if _, err := db.Exec(createTableQuery); err != nil {
@@ -70,34 +70,33 @@ func setupRouter() *gin.Engine {
 
 // Register new item
 func registerItem(c *gin.Context) {
-    var requestBody struct {
-        Name   string `json:"name"`
-        CardID string `json:"card_id"`
-    }
-    if err := c.ShouldBindJSON(&requestBody); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
+	var requestBody struct {
+		Name string `json:"name"`
+	}
+	if err := c.ShouldBindJSON(&requestBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	cardID := uuid.New().String()
+	// Check if cardID already exists
+	var existingID int
+	err := db.QueryRow("SELECT id FROM items WHERE card_id = $1", cardID).Scan(&existingID)
+	if err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Registration failed. Please try again."})
+		return
+	} else if err != sql.ErrNoRows {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
-    // Check if cardID already exists
-    var existingID int
-    err := db.QueryRow("SELECT id FROM items WHERE card_id = $1", requestBody.CardID).Scan(&existingID)
-    if err == nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Registration failed: This Card ID ("+ requestBody.CardID +") already exists"})
-        return
-    } else if err != sql.ErrNoRows {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
+	var newID int
+	err = db.QueryRow("INSERT INTO items (name, count, card_id) VALUES ($1, $2, $3) RETURNING id", requestBody.Name, 0, cardID).Scan(&newID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
-    var newID int
-    err = db.QueryRow("INSERT INTO items (name, count, card_id) VALUES ($1, $2, $3) RETURNING id", requestBody.Name, 0, requestBody.CardID).Scan(&newID)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
-
-    c.JSON(http.StatusOK, gin.H{"message": "Item registered", "id": newID})
+    c.JSON(http.StatusOK, gin.H{"id":newID, "name": requestBody.Name, "cardId": cardID})
 }
 
 func addItemCount(c *gin.Context) {
