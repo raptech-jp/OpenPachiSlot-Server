@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Items List</h1>
-    <table v-if="items.length">
+    <table v-if="items && items.length">
       <thead>
         <tr>
           <th>ID</th>
@@ -22,6 +22,7 @@
     <p v-else>No items found.</p>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
