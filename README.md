@@ -1,6 +1,13 @@
 # OpenPachiSlot-Server
 
-OpenPachiSlot-Server is a robust software solution integrating a Go-based web server, a Vue.js front-end, and a PostgreSQL database. It's designed for efficient management and tracking of items via a RESTful API. The system employs Docker for streamlined environment setup, the Gin framework for handling HTTP requests, and Vue.js for a dynamic user interface.
+OpenPachiSlot-Server is an advanced software solution, designed for efficient management and tracking of items. It integrates a Go-based web server with a PostgreSQL database and a Vue.js front-end, offering a comprehensive RESTful API service. The project leverages Docker for simplified environment setup, the Gin framework for efficient HTTP request handling, and Vue.js for a responsive user interface.
+
+## Key Features
+
+- **Robust Item Tracking:** Manage and track items efficiently via a RESTful API.
+- **Modern Technology Stack:** Go, Vue.js, PostgreSQL, Docker, and Nginx.
+- **Easy Setup:** Docker and Docker Compose for straightforward deployment.
+- **Flexible API Endpoints:** Facilitate various operations like item registration, data retrieval, and count updates.
 
 ## Requirements
 
@@ -26,36 +33,22 @@ OpenPachiSlot-Server is a robust software solution integrating a Go-based web se
     POSTGRES_DB=DATABASE_NAME
     ```
 
-3. **Docker Compose Configuration:**
+3. **Docker Compose:**
+   Use `docker-compose.yml` to set up the environment:
+   ```bash
+   docker-compose up --build
+   ```
 
-    The `docker-compose.yml` outlines four services:
+4. **Access the Application:**
+   - Vue.js frontend: `http://localhost`
+   - Go server API: `http://localhost/api`
 
-    - `vue-app`: The Vue.js application for the front-end, accessible at `http://vue-app:8080`.
-    - `go-app`: The Go server for the backend, set up at `http://go-app:8080`.
-    - `postgres`: A PostgreSQL database.
-    - `nginx`: An Nginx server acting as a reverse proxy, routing traffic to the appropriate service.
+## API Documentation
 
-    To initiate these services, execute:
-    ```
-    docker-compose up --build
-    ```
-
-    **Nginx Configuration:**
-
-    The Nginx server is configured via `nginx.conf` to route:
-    
-    - All `/` requests to the Vue.js application.
-    - All `/api` requests to the Go server, stripping the `/api` prefix.
-
-4. **Running the Application:**
-
-    After running the Docker Compose command, the Vue.js app will be available on port 80 of the host machine, and the Go server will handle API requests at `/api`.
-
-## API Endpoints
-
-- **POST /register:** Registers a new item with a name and card ID.
-- **POST /add:** Increments the count of an item based on its ID and card ID.
-- **POST /data:** Retrieves item data using its card ID.
+- **POST /user:** Register a new user with a name and card ID.
+- **PUT /user/:uuid:** Update user data based on UUID.
+- **GET /user/:uuid:** Retrieve user data using UUID.
+- **GET /all-items:** Get a list of all items.
 
 ## Development Notes
 
