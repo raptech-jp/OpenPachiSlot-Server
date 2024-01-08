@@ -1,11 +1,12 @@
 <template>
     <div class="flex justify-center items-center">
-      <div class="flex items-center mx-auto">
-          <input v-model="name" type="text" placeholder="Enter name" class="p-2.5 w-1/2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
-          <button @click="sendData" class="ml-2">Register</button>
-      </div>
+        <div class="flex items-center mx-auto">
+            <input v-model="name" type="text" placeholder="Enter name"
+                class="p-2.5 w-1/2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+            <button @click="sendData" class="ml-2">Register</button>
+        </div>
     </div>
-  </template>
+</template>
   
 <script>
 import axios from 'axios';
@@ -31,7 +32,7 @@ export default {
                 .then(response => {
                     this.cardId = response.data.cardId;
                     this.registrationSuccessful = true;
-                    this.$emit('registration-success', { cardId: this.cardId, name: this.name});
+                    this.$emit('registration-success', { cardId: this.cardId, name: this.name });
                     this.name = ''; // 成功後にテキストボックスをクリア
                     this.showWarning = false;
                 })
