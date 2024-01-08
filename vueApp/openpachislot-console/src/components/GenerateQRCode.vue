@@ -31,6 +31,7 @@ export default {
         async generateQRCode(uuid) {
             try {
                 this.qrCodeData = await QRCode.toDataURL(uuid);
+                this.$emit('qr-generated', true); // 親コンポーネントにイベントを送信
             } catch (error) {
                 console.error('Error generating QR code: ', error);
             }

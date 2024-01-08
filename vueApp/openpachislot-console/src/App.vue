@@ -1,11 +1,11 @@
 <template>
   <div id="app" class="font-sans antialiased text-center text-gray-800 mt-15">
-    <RegisterForms @registration-success="handleRegistration" class="p-4" />
-    <generateQRCode v-if="cardId" :uuid="cardId" :name="name" class="p-4"></generateQRCode>
+    <RegisterForms v-if="!qrGenerated" @registration-success="handleRegistration" class="p-4" />
+    <generateQRCode v-if="cardId" :uuid="cardId" :name="name" @qr-generated="qrGenerated = $event" class="p-4">
+    </generateQRCode>
     <ItemList ref="itemList" class="p-4" />
   </div>
 </template>
-
 
 <script>
 import RegisterForms from './components/RegisterForms.vue';
@@ -22,7 +22,8 @@ export default {
   data() {
     return {
       name: '',
-      cardId: null
+      cardId: null,
+      qrGenerated: false
     };
   },
   methods: {
