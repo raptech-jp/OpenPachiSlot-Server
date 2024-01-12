@@ -21,7 +21,6 @@
         </tbody>
       </table>
     </div>
-    <p v-else class="text-gray-600">No items found.</p>
   </div>
 </template>
 

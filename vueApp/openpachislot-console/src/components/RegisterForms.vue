@@ -1,11 +1,12 @@
 <template>
-    <div class="flex justify-center items-center">
+    <div class="flex justify-center items-center p-4">
         <div class="flex items-center mx-auto">
             <input v-model="name" type="text" placeholder="Enter name"
                 class="p-2.5 w-1/2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
             <button @click="sendData" class="ml-2">Register</button>
         </div>
     </div>
+    <p v-if="showWarning" class="text-red-500">名前を入力してください。</p>
 </template>
   
 <script>
