@@ -1,9 +1,9 @@
 <template>
-    <div class="flex justify-center items-center p-4">
+    <div class="flex justify-center items-center p-4" v-bind="$attrs">
         <div class="flex items-center mx-auto">
             <input v-model="name" type="text" placeholder="Enter name"
-                class="p-2.5 w-1/2 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
-            <button @click="sendData" class="ml-2">Register</button>
+                class="p-2.5 w-1/2 text-sm text-gray-700 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+            <button @click="sendData" class="ml-2 bg-transparent hover:bg-gray-500 text-gray-700 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">Register</button>
         </div>
     </div>
     <p v-if="showWarning" class="text-red-500">名前を入力してください。</p>
@@ -12,6 +12,7 @@
 <script>
 import axios from 'axios';
 export default {
+    emits: ['registration-success'],
     data() {
         return {
             name: '',
@@ -43,4 +44,5 @@ export default {
         },
     }
 };
+
 </script>

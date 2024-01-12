@@ -3,7 +3,6 @@
       <RegisterForms v-if="!qrGenerated" @registration-success="handleRegistration" class="p-4" />
       <generateQRCode v-if="cardId" :uuid="cardId" :name="name" @qr-generated="qrGenerated = $event" class="p-4">
       </generateQRCode>
-      <!-- ItemList removed from here -->
     </div>
   </template>
   
@@ -16,7 +15,6 @@
     components: {
       RegisterForms,
       generateQRCode
-      // ItemList removed from here
     },
     data() {
       return {
@@ -29,7 +27,6 @@
       handleRegistration(data) {
         this.name = data.name;
         this.cardId = data.cardId;
-        // Adjust as needed, since ItemList is no longer here
       }
     }
   };
