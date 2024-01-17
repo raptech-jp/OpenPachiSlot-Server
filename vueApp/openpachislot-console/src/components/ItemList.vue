@@ -2,10 +2,11 @@
   <div class="container mx-auto px-4">
     <h1 class="text-2xl font-bold mb-4">Items List</h1>
     <div class="mb-4">
-      <button @click="setSort('id', 1)" class="mr-2 px-4 py-2 bg-blue-500 text-white rounded">Sort by ID (Asc)</button>
-      <button @click="setSort('id', -1)" class="mr-2 px-4 py-2 bg-blue-500 text-white rounded">Sort by ID (Desc)</button>
-      <button @click="setSort('count', 1)" class="mr-2 px-4 py-2 bg-green-500 text-white rounded">Sort by Count (Asc)</button>
-      <button @click="setSort('count', -1)" class="mr-2 px-4 py-2 bg-green-500 text-white rounded">Sort by Count (Desc)</button>
+      <h2 class="text-xl">Sort</h2>
+      <button @click="setSort('id', 1)" class="mr-2 my-2 px-4 py-2 bg-blue-500 text-white rounded">ID (Asc)</button>
+      <button @click="setSort('id', -1)" class="mr-2 my-2 px-4 py-2 bg-blue-500 text-white rounded">ID (Desc)</button>
+      <button @click="setSort('count', 1)" class="mr-2 my-2 px-4 py-2 bg-green-500 text-white rounded">Count (Asc)</button>
+      <button @click="setSort('count', -1)" class="mr-2 my-2 px-4 py-2 bg-green-500 text-white rounded">Count (Desc)</button>
     </div>
 
     <div v-if="sortedItems && sortedItems.length">
