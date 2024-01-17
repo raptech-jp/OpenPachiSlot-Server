@@ -3,7 +3,7 @@
     <h1 class="text-2xl font-bold mb-4">Items List</h1>
     <div v-if="sortedItems && sortedItems.length">
       <table class="w-full text-sm text-left rtl:text-right text-gray-700" >
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-100">
           <tr>
             <th class="border px-4 py-2 bg-gray-100 text-left">ID</th>
             <th class="border px-4 py-2 bg-gray-100 text-left">Name</th>
@@ -58,7 +58,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchItems(); // コンポーネントのマウント時にアイテムを取得
+    //this.fetchItems(); // コンポーネントのマウント時にアイテムを取得
   }
 };
 </script>

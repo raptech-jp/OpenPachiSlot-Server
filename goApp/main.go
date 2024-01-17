@@ -67,7 +67,7 @@ func setupRouter() *gin.Engine {
 
 	// Public routes
 	r.POST("/login", login)
-	r.POST("/register", registerUser)
+	r.POST("/user", registerUser)
 
 	protected := r.Group("/")
 	protected.Use(authMiddleware())
