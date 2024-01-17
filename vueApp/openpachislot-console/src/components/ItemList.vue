@@ -45,7 +45,12 @@ export default {
   methods: {
     async fetchItems() {
       try {
-        const response = await axios.get('/api/all-items');
+        const token = this.$store.state.user.token;
+        const response = await axios.get('/api/all-items',{
+          headers: {
+            Authorization: token
+          }
+        });
         this.items = response.data;
       } catch (error) {
         console.error('Error fetching items:', error);

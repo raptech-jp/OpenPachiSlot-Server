@@ -8,6 +8,7 @@ OpenPachiSlot-Server is an advanced software solution, designed for efficient ma
 - **Modern Technology Stack:** Go, Vue.js, PostgreSQL, Docker, and Nginx.
 - **Easy Setup:** Docker and Docker Compose for straightforward deployment.
 - **Flexible API Endpoints:** Facilitate various operations like item registration, data retrieval, and count updates.
+- **Multilingual Frontend Support:** We welcome contributions for frontend multilingual support.
 
 ## Requirements
 
@@ -31,6 +32,8 @@ OpenPachiSlot-Server is an advanced software solution, designed for efficient ma
     POSTGRES_PASSWORD=Y0UR_PASSWORD
     POSTGRES_PORT=5432
     POSTGRES_DB=DATABASE_NAME
+    ADMIN_ID=admin
+    ADMIN_PASSWORD=Password01
     ```
 
 3. **Docker Compose:**
@@ -43,12 +46,21 @@ OpenPachiSlot-Server is an advanced software solution, designed for efficient ma
    - Vue.js frontend: `http://localhost`
    - Go server API: `http://localhost/api`
 
-## API Documentation
+## Authentication
 
-- **POST /user:** Register a new user with a name and card ID.
-- **PUT /user/:uuid:** Update user data based on UUID.
-- **GET /user/:uuid:** Retrieve user data using UUID.
-- **GET /all-items:** Get a list of all items.
+The `/api/login` endpoint is used for authentication. Users should authenticate using their "id" and "password". Upon successful authentication, a JWT (JSON Web Token) is issued. This token must be included in the request header as `Authorization: token` for subsequent authenticated requests.
+
+## API Endpoints
+
+- `POST /user:**` (registerUser): Register a new user with a name and card ID.
+
+Protected endpoints include:
+
+- `PUT /user/:uuid` (updateUser): Update user data.
+- `GET /user/:uuid` (getUserData): Retrieve data of a specific user.
+- `GET /all-items` (getAllItems): Retrieve data of all items.
+
+These endpoints require authentication using the JWT obtained from the `/api/login` endpoint.
 
 ## Development Notes
 

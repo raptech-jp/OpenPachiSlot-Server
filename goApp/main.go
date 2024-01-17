@@ -1,16 +1,21 @@
 package main
 
 import (
+	"crypto/subtle"
 	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 )
+
+var jwtKey = []byte("your_secret_key")
 
 // Database connection instance
 var db *sql.DB
@@ -60,11 +65,76 @@ func setupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(corsMiddleware())
 
-	r.POST("/user", registerUser)
-	r.PUT("/user/:uuid", updateUser)
-	r.GET("/user/:uuid", getUserData)
-	r.GET("/all-items", getAllItems)
+	// Public routes
+	r.POST("/login", login)
+	r.POST("/register", registerUser)
+
+	protected := r.Group("/")
+	protected.Use(authMiddleware())
+
+	// Protected routes
+	protected.PUT("/user/:uuid", updateUser)
+	protected.GET("/user/:uuid", getUserData)
+	protected.GET("/all-items", getAllItems)
+
 	return r
+}
+
+func login(c *gin.Context) {
+	var requestBody struct {
+		ID       string `json:"id"`
+		Password string `json:"password"`
+	}
+
+	if err := c.ShouldBindJSON(&requestBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	adminID := os.Getenv("ADMIN_ID")
+	adminPassword := os.Getenv("ADMIN_PASSWORD")
+	if adminID == "" || adminPassword == "" {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Server configuration error"})
+		return
+	}
+
+	if requestBody.ID != adminID || subtle.ConstantTimeCompare([]byte(requestBody.Password), []byte(adminPassword)) == 0 {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		return
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"userID": requestBody.ID,
+		"exp":    time.Now().Add(time.Hour * 72).Unix(),
+	})
+
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": tokenString})
+}
+
+// JWT middleware
+func authMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenString := c.GetHeader("Authorization")
+
+		// Check if token is empty
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			return jwtKey, nil
+		})
+
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication failed"})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
 }
 
 // Register new item
@@ -101,7 +171,7 @@ func registerUser(c *gin.Context) {
 
 func updateUser(c *gin.Context) {
 	var requestBody struct {
-		ID  int `json:"id"`
+		ID       int `json:"id"`
 		AddCount int `json:"add"`
 	}
 	CardID := c.Param("uuid")
