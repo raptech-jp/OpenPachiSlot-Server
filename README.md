@@ -52,7 +52,7 @@ The `/api/login` endpoint is used for authentication. Users should authenticate 
 
 ## API Endpoints
 
-- `POST /user:**` (registerUser): Register a new user with a name and card ID.
+- `POST /user` (registerUser): Register a new user with a name and card ID.
 
 Protected endpoints include:
 
