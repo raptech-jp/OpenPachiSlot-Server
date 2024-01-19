@@ -47,10 +47,13 @@ export default {
                     id: this.userId,
                     password: this.password
                 });
-                this.setUser({ token: response.data.token, userId: this.userId });
+                const token = response.data.token;
+                this.setUser({ token: token, userId: this.userId });
+
+                localStorage.setItem('token', token);
+                localStorage.setItem('userId', this.userId);
+
                 this.loginError = false;
-                this.userId = '';
-                this.password = '';
             } catch (error) {
                 this.loginError = true;
                 this.password = '';
