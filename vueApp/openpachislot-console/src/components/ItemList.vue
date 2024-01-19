@@ -5,12 +5,17 @@
       <h2 class="text-xl">Sort</h2>
       <button @click="setSort('id', 1)" class="mr-2 my-2 px-4 py-2 bg-blue-500 text-white rounded">ID (Asc)</button>
       <button @click="setSort('id', -1)" class="mr-2 my-2 px-4 py-2 bg-blue-500 text-white rounded">ID (Desc)</button>
-      <button @click="setSort('count', 1)" class="mr-2 my-2 px-4 py-2 bg-green-500 text-white rounded">Count (Asc)</button>
-      <button @click="setSort('count', -1)" class="mr-2 my-2 px-4 py-2 bg-green-500 text-white rounded">Count (Desc)</button>
+      <button @click="setSort('count', 1)" class="mr-2 my-2 px-4 py-2 bg-green-500 text-white rounded">Count
+        (Asc)</button>
+      <button @click="setSort('count', -1)" class="mr-2 my-2 px-4 py-2 bg-green-500 text-white rounded">Count
+        (Desc)</button>
     </div>
-
-    <div v-if="sortedItems && sortedItems.length">
-      <table class="w-full text-sm text-left rtl:text-right text-gray-700" >
+    <div class="mb-4">
+      <h2 class="text-xl">Filter</h2>
+      <input v-model="filterName" type="text" placeholder="Filter by name" class="px-4 py-2 border rounded">
+    </div>
+    <div v-if="sortedItems && sortedItems.length" class="mb-4">
+      <table class="w-full text-sm text-left rtl:text-right text-gray-700">
         <thead class="text-xs text-gray-700 uppercase bg-gray-100">
           <tr>
             <th class="border px-4 py-2 bg-gray-100 text-left" @click="changeSort('id')">ID</th>
@@ -39,17 +44,23 @@ export default {
     return {
       items: [],
       sortKey: 'id',
-      sortOrder: 1
+      sortOrder: 1,
+      filterName: '',
     };
   },
   computed: {
     sortedItems() {
-      return this.items.slice().sort((a, b) => {
-        let modifier = this.sortOrder;
-        if (a[this.sortKey] < b[this.sortKey]) return -1 * modifier;
-        if (a[this.sortKey] > b[this.sortKey]) return 1 * modifier;
-        return 0;
-      });
+      return this.items
+        .filter(item => {
+          if (this.filterName === '') return true;
+          return item.name.toLowerCase().includes(this.filterName.toLowerCase());
+        })
+        .sort((a, b) => {
+          let modifier = this.sortOrder;
+          if (a[this.sortKey] < b[this.sortKey]) return -1 * modifier;
+          if (a[this.sortKey] > b[this.sortKey]) return 1 * modifier;
+          return 0;
+        });
     }
   },
   created() {
@@ -59,7 +70,7 @@ export default {
     async fetchItems() {
       try {
         const token = this.$store.state.user.token;
-        const response = await axios.get('/api/all-items',{
+        const response = await axios.get('/api/all-items', {
           headers: {
             Authorization: token
           }
@@ -73,6 +84,6 @@ export default {
       this.sortKey = key;
       this.sortOrder = order;
     }
-  }
+  },
 };
 </script>
