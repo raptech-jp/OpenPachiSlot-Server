@@ -4,7 +4,23 @@
       OpenPachiSlot
     </h1>
   </header>
-  <div class="overflow-auto">
+  <div :style="{ height: `calc(100dvh - ${headerHeight}px)` }" class="overflow-auto">
     <router-view></router-view>
   </div>
 </template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+const header = ref(null);
+const headerHeight = ref(0);
+onMounted(() => {
+  if (header.value) {
+    headerHeight.value = header.value.clientHeight;
+  }
+});
+window.addEventListener('resize', () => {
+  if (header.value) {
+    headerHeight.value = header.value.clientHeight;
+  }
+});
+</script>
