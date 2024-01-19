@@ -15,7 +15,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var jwtKey = []byte("your_secret_key")
+var (
+    jwtKey         = []byte(os.Getenv("JWT_SECRET_KEY"))
+    adminID        = os.Getenv("ADMIN_ID")
+    adminPassword  = os.Getenv("ADMIN_PASSWORD")
+)
 
 // Database connection instance
 var db *sql.DB
@@ -91,8 +95,6 @@ func login(c *gin.Context) {
 		return
 	}
 
-	adminID := os.Getenv("ADMIN_ID")
-	adminPassword := os.Getenv("ADMIN_PASSWORD")
 	if adminID == "" || adminPassword == "" {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Server configuration error"})
 		return
