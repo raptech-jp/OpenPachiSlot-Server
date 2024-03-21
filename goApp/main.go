@@ -218,7 +218,7 @@ func updateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Count updated", "newCount": newCount})
+	c.JSON(http.StatusOK, gin.H{"newCount": newCount})
 }
 
 // Get data by ID
