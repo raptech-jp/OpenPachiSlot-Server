@@ -1,4 +1,4 @@
-FROM golang:1.20.4-bullseye AS go-builder
+FROM golang:1.23rc2-bullseye AS go-builder
 WORKDIR /
 RUN go mod init PachiSlotServer
 RUN go get github.com/dgrijalva/jwt-go
